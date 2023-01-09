@@ -4,7 +4,6 @@ import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { COLUMNS, DEFAULT_PROPS } from '../../../constants';
 import type { DayBarItemProps } from '../../../types';
-import { getDayBarStyle } from '../../../utils';
 
 const MultipleDayBar = ({
   width,
@@ -14,7 +13,6 @@ const MultipleDayBar = ({
   onPressDayNum,
   theme,
   locale,
-  highlightDates,
   currentDate,
 }: DayBarItemProps) => {
   const _renderDay = (dayIndex: number) => {
@@ -22,40 +20,33 @@ const MultipleDayBar = ({
     const dateStr = dateByIndex.format('YYYY-MM-DD');
     const [dayNameText, dayNum] = dateByIndex
       .locale(locale)
-      .format('ddd,DD')
+      .format(viewMode === 'week' ? 'dd,DD' : 'ddd,DD')
       .split(',');
-    const highlightDate = highlightDates?.[dateStr];
-
-    const { dayName, dayNumber, dayNumberContainer } = getDayBarStyle(
-      currentDate,
-      dateByIndex,
-      theme,
-      highlightDate
-    );
+    const isWeek = viewMode === 'week';
+    const isToday = dateStr === currentDate;
 
     return (
       <View
         key={`${startDate}_${dayIndex}`}
         style={[styles.dayItem, { width: columnWidth }]}
       >
-        <Text
-          allowFontScaling={theme.allowFontScaling}
-          style={[styles.dayName, dayName]}
-        >
-          {dayNameText}
-        </Text>
         <TouchableOpacity
           activeOpacity={0.6}
           disabled={!onPressDayNum}
           onPress={() => onPressDayNum?.(dateStr)}
-          style={[styles.dayNumBtn, dayNumberContainer]}
+          style={[styles.dayNumBtn]}
         >
           <Text
             allowFontScaling={theme.allowFontScaling}
-            style={[styles.dayNumber, dayNumber]}
+            style={[
+              styles.dayNumber,
+              isWeek && styles.weekDay,
+              isToday && styles.today,
+            ]}
           >
-            {dayNum}
+            {dayNameText?.charAt(0)} {dayNum}
           </Text>
+          {isToday && <View style={styles.todayIndicator} />}
         </TouchableOpacity>
       </View>
     );
@@ -86,10 +77,20 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginTop: 2,
     borderRadius: 14,
-    width: 28,
-    height: 28,
     backgroundColor: DEFAULT_PROPS.WHITE_COLOR,
+    padding: 4,
   },
-  dayName: { color: DEFAULT_PROPS.SECONDARY_COLOR, fontSize: 12 },
-  dayNumber: { color: DEFAULT_PROPS.SECONDARY_COLOR, fontSize: 16 },
+  dayNumber: { color: '#9F9FAB', fontSize: 14, fontFamily: 'Gilroy-SemiBold' },
+  weekDay: { fontSize: 12 },
+  today: {
+    color: DEFAULT_PROPS.PRIMARY_COLOR,
+  },
+  todayIndicator: {
+    width: 10,
+    height: 2,
+    borderRadius: 2,
+    backgroundColor: DEFAULT_PROPS.PRIMARY_COLOR,
+    position: 'absolute',
+    bottom: -3,
+  },
 });

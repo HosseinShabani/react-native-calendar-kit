@@ -37,13 +37,9 @@ const TimelineHours = () => {
         },
       ]}
     >
-      {hours.map(_renderHour)}
-      <View
-        style={[
-          styles.verticalLine,
-          { top: spaceFromTop, backgroundColor: theme.cellBorderColor },
-        ]}
-      />
+      {hours
+        .map((hour) => ({ ...hour, text: hour.text.replace(':00', '') }))
+        .map(_renderHour)}
     </View>
   );
 };
@@ -80,15 +76,14 @@ const HourItem = ({
 
 const styles = StyleSheet.create({
   hours: {
-    alignItems: 'center',
+    alignItems: 'flex-end',
     overflow: 'hidden',
   },
-  hourText: { position: 'absolute', fontSize: 10 },
-  verticalLine: {
-    width: 1,
-    backgroundColor: '#E8E9ED',
+  hourText: {
     position: 'absolute',
-    right: 0,
-    height: '100%',
+    color: 'rgba(122, 122, 138, 1)',
+    fontFamily: 'Gilroy-SemiBold',
+    fontSize: 11,
+    paddingRight: 5,
   },
 });

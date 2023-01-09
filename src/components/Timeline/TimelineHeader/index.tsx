@@ -213,14 +213,8 @@ export default TimelineHeader;
 
 const styles = StyleSheet.create({
   container: {
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 1,
-    },
-    shadowOpacity: 0.22,
-    shadowRadius: 2.22,
-    elevation: 3,
+    borderBottomColor: 'rgba(215, 218, 227, 0.7)',
+    borderBottomWidth: 1,
     zIndex: 99,
   },
   multipleDayContainer: { flexDirection: 'row' },

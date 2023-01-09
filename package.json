@@ -1,5 +1,5 @@
 {
-  "name": "@howljs/calendar-kit",
+  "name": "calendar-kit",
   "version": "1.10.5",
   "description": "React Native Calendar Kit",
   "main": "lib/commonjs/index",
@@ -33,6 +33,7 @@
     "prepare": "bob build",
     "release": "release-it",
     "example": "yarn --cwd example",
+    "commit": "cz",
     "bootstrap": "yarn example && yarn install && yarn example pods"
   },
   "keywords": [
@@ -42,13 +43,13 @@
     "calendar-kit",
     "calendar-week-view"
   ],
-  "repository": "https://github.com/howljs/react-native-calendar-kit",
+  "repository": "https://github.com/HosseinShabani/react-native-calendar-kit",
   "author": "howljs <lehau.dev@gmail.com> (https://github.com/howljs)",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/howljs/react-native-calendar-kit/issues"
   },
-  "homepage": "https://github.com/howljs/react-native-calendar-kit#readme",
+  "homepage": "https://github.com/HosseinShabani/react-native-calendar-kit#readme",
   "publishConfig": {
     "registry": "https://registry.npmjs.org/"
   },

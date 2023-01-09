@@ -242,12 +242,21 @@ export type UnavailableHoursStyle = Record<
   }[]
 >;
 
+export type EventCustomType = 'appointment' | 'personal';
+
+export interface CustomEvent {
+  type: EventCustomType;
+  title: string;
+  reservedByClient?: boolean;
+  category?: string;
+  haveAttachment?: boolean;
+}
+
 export interface EventItem {
   id: string;
   start: string;
   end: string;
-  title?: string;
-  color?: string;
+  event?: CustomEvent;
   containerStyle?: StyleProp<ViewStyle>;
   [key: string]: any;
 }

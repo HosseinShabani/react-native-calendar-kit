@@ -1,66 +1,147 @@
-import * as React from 'react';
-
 import {
-  createDrawerNavigator,
-  DrawerContentComponentProps,
-  DrawerContentScrollView,
-  DrawerItem,
-} from '@react-navigation/drawer';
-import { NavigationContainer } from '@react-navigation/native';
-import { Calendar } from './screens';
+  CustomEvent,
+  EventCustomType,
+  EventItem,
+  PackedEvent,
+  RangeTime,
+  TimelineCalendar,
+  TimelineCalendarHandle,
+} from '@howljs/calendar-kit';
+import React, { useCallback, useRef, useState } from 'react';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Line, Svg } from 'react-native-svg';
 
-const Drawer = createDrawerNavigator();
+const unavailableHours = {
+  '0': [{ start: 0, end: 24 }],
+  '1': [
+    { start: 0, end: 7 },
+    { start: 18, end: 24 },
+  ],
+};
 
-function CustomDrawerContent(props: DrawerContentComponentProps) {
-  return (
-    <DrawerContentScrollView {...props}>
-      <DrawerItem
-        label="DayView"
-        onPress={() => {
-          props.navigation.navigate('Calendar', { viewMode: 'day' });
-        }}
-      />
-      <DrawerItem
-        label="3-days"
-        onPress={() => {
-          props.navigation.navigate('Calendar', { viewMode: 'threeDays' });
-        }}
-      />
-      <DrawerItem
-        label="Week"
-        onPress={() => {
-          props.navigation.navigate('Calendar', { viewMode: 'week' });
-        }}
-      />
-      <DrawerItem
-        label="Work Week"
-        onPress={() => {
-          props.navigation.navigate('Calendar', { viewMode: 'workWeek' });
-        }}
-      />
-    </DrawerContentScrollView>
-  );
-}
+const App = () => {
+  const calendarRef = useRef<TimelineCalendarHandle>(null);
+  const [events, setEvents] = useState<EventItem[]>([]);
+  const [selectedEvent, setSelectedEvent] = useState<PackedEvent>();
 
-export default function App() {
-  const _renderDrawerContent = (props: DrawerContentComponentProps) => (
-    <CustomDrawerContent {...props} />
-  );
+  const _onDragCreateEnd = (event: RangeTime) => {
+    const randomId = Math.random().toString(36).slice(2, 10);
+    const newEvent = {
+      id: randomId,
+      start: event.start,
+      end: event.end,
+      event: {
+        title: 'Alice barton',
+        type: 'appointment' as EventCustomType,
+        category: 'Hybrid Lashes',
+        reservedByClient: false,
+      } as CustomEvent,
+    };
+    setEvents((prev) => [...prev, newEvent]);
+  };
 
-  return (
-    <NavigationContainer>
-      <Drawer.Navigator
-        initialRouteName="Calendar"
-        useLegacyImplementation
-        drawerContent={_renderDrawerContent}
-        screenOptions={{ drawerType: 'front' }}
-      >
-        <Drawer.Screen
-          name="Calendar"
-          component={Calendar}
-          options={{ title: 'Calendar', headerTitleAllowFontScaling: false }}
+  const _onLongPressEvent = (event: PackedEvent) => {
+    setSelectedEvent(event);
+  };
+
+  const _onPressCancel = () => {
+    setSelectedEvent(undefined);
+  };
+
+  const _onPressSubmit = () => {
+    setEvents((prevEvents) =>
+      prevEvents.map((ev) => {
+        if (ev.id === selectedEvent?.id) {
+          return { ...ev, ...selectedEvent };
+        }
+        return ev;
+      })
+    );
+    setSelectedEvent(undefined);
+  };
+
+  const _renderEditFooter = () => {
+    return (
+      <View style={styles.footer}>
+        <TouchableOpacity style={styles.button} onPress={_onPressCancel}>
+          <Text style={styles.btnText}>Cancel</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.button} onPress={_onPressSubmit}>
+          <Text style={styles.btnText}>Save</Text>
+        </TouchableOpacity>
+      </View>
+    );
+  };
+
+  const _renderHalfLineCustom = useCallback(
+    (width) => (
+      <Svg>
+        <Line
+          x1="0"
+          y1="1"
+          x2={width}
+          y2="1"
+          stroke="#ececec"
+          strokeDasharray={5}
+          strokeWidth={2}
         />
-      </Drawer.Navigator>
-    </NavigationContainer>
+      </Svg>
+    ),
+    []
   );
-}
+
+  return (
+    <View style={styles.container}>
+      <TimelineCalendar
+        ref={calendarRef}
+        events={events}
+        unavailableHours={unavailableHours}
+        onDragCreateEnd={_onDragCreateEnd}
+        onLongPressEvent={_onLongPressEvent}
+        selectedEvent={selectedEvent}
+        onEndDragSelectedEvent={setSelectedEvent}
+        hourFormat="hh:mm a"
+        useHaptic
+        renderHalfLineCustom={_renderHalfLineCustom}
+        halfLineContainerStyle={styles.halfLineContainer}
+      />
+      {!!selectedEvent && _renderEditFooter()}
+    </View>
+  );
+};
+
+export default App;
+
+const styles = StyleSheet.create({
+  container: { flex: 1, backgroundColor: '#FFF' },
+  headerRight: { marginRight: 16 },
+  footer: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: '#FFF',
+    height: 85,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: -2,
+    },
+    shadowOpacity: 0.22,
+    shadowRadius: 2.22,
+    elevation: 3,
+    flexDirection: 'row',
+    justifyContent: 'center',
+  },
+  button: {
+    height: 45,
+    paddingHorizontal: 24,
+    backgroundColor: '#1973E7',
+    justifyContent: 'center',
+    borderRadius: 24,
+    marginHorizontal: 8,
+    marginVertical: 8,
+  },
+  btnText: { fontSize: 16, color: '#FFF', fontWeight: 'bold' },
+  halfLineContainer: { backgroundColor: 'transparent' },
+});

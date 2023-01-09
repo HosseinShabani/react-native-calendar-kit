@@ -15,6 +15,7 @@ import { useTimelineCalendarContext } from '../../context/TimelineProvider';
 import useTimelineScroll from '../../hooks/useTimelineScroll';
 import type { PackedEvent, ThemeProperties } from '../../types';
 import { triggerHaptic } from '../../utils';
+import CustomEvent from '../CustomEvent';
 
 interface DragEditItemProps {
   selectedEvent: PackedEvent;
@@ -27,7 +28,7 @@ interface DragEditItemProps {
   EditIndicatorComponent?: JSX.Element;
 }
 
-const EVENT_DEFAULT_COLOR = '#FFFFFF';
+const EVENT_DEFAULT_COLOR = '#E4E7EC';
 
 const DragEditItem = ({
   selectedEvent,
@@ -268,10 +269,6 @@ const DragEditItem = ({
     };
   }, []);
 
-  const _renderEventContent = () => {
-    return <Text style={[styles.title, theme.eventTitle]}>{event.title}</Text>;
-  };
-
   return (
     <View style={StyleSheet.absoluteFill} pointerEvents="box-none">
       <GestureDetector gesture={dragPositionGesture}>
@@ -286,9 +283,11 @@ const DragEditItem = ({
             animatedStyle,
           ]}
         >
-          {renderEventContent
-            ? renderEventContent(event, timeIntervalHeight)
-            : _renderEventContent()}
+          {renderEventContent ? (
+            renderEventContent(event, timeIntervalHeight)
+          ) : (
+            <CustomEvent event={event} />
+          )}
           <GestureDetector gesture={dragDurationGesture}>
             <View style={styles.indicatorContainer}>
               {EditIndicatorComponent ? (
@@ -359,7 +358,7 @@ const AnimatedHour = ({
       newTime = dayjs(
         `1970/1/1 ${hourStr}:${minutesStr}`,
         'YYYY/M/D HH:mm'
-      ).format(hourFormat);
+      ).format(hourFormat.replace(' a', ''));
     }
     setTime(newTime);
   };
@@ -422,16 +421,6 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-start',
     marginBottom: 2,
   },
-  hourContainer: {
-    position: 'absolute',
-    borderColor: DEFAULT_PROPS.PRIMARY_COLOR,
-    backgroundColor: DEFAULT_PROPS.WHITE_COLOR,
-    borderWidth: 1,
-    borderRadius: 4,
-    top: -6,
-    alignItems: 'center',
-    left: 4,
-  },
   indicatorContainer: {
     position: 'absolute',
     bottom: 0,
@@ -443,10 +432,19 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  title: { paddingVertical: 4, paddingHorizontal: 2, fontSize: 10 },
+  hourContainer: {
+    position: 'absolute',
+    top: -6,
+    alignItems: 'center',
+    left: 7,
+    paddingLeft: 0,
+    backgroundColor: DEFAULT_PROPS.PRIMARY_COLOR,
+    borderRadius: 2,
+  },
   hourText: {
-    color: DEFAULT_PROPS.PRIMARY_COLOR,
-    fontSize: 10,
+    fontFamily: 'Gilroy-SemiBold',
+    color: DEFAULT_PROPS.WHITE_COLOR,
+    fontSize: 11,
   },
   indicatorLine: {
     width: 12,

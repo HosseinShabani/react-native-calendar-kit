@@ -3,14 +3,12 @@ import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { DEFAULT_PROPS } from '../../../constants';
 import type { DayBarItemProps } from '../../../types';
-import { getDayBarStyle } from '../../../utils';
 
 const SingleDayBar = ({
   width,
   startDate,
   theme,
   locale,
-  highlightDates,
   onPressDayNum,
   currentDate,
 }: DayBarItemProps) => {
@@ -19,37 +17,25 @@ const SingleDayBar = ({
     const dateStr = dateByIndex.format('YYYY-MM-DD');
     const [dayNameText, dayNum] = dateByIndex
       .locale(locale)
-      .format('ddd,DD')
+      .format('dddd,DD')
       .split(',');
-    const highlightDate = highlightDates?.[dateStr];
-
-    const { dayName, dayNumber, dayNumberContainer } = getDayBarStyle(
-      currentDate,
-      dateByIndex,
-      theme,
-      highlightDate
-    );
+    const isToday = dateStr === currentDate;
 
     return (
       <View style={styles.dayItem}>
-        <Text
-          allowFontScaling={theme.allowFontScaling}
-          style={[styles.dayName, dayName]}
-        >
-          {dayNameText}
-        </Text>
         <TouchableOpacity
           activeOpacity={0.6}
           disabled={!onPressDayNum}
           onPress={() => onPressDayNum?.(dateStr)}
-          style={[styles.dayNumBtn, dayNumberContainer]}
+          style={[styles.dayNumBtn]}
         >
           <Text
             allowFontScaling={theme.allowFontScaling}
-            style={[styles.dayNumber, dayNumber]}
+            style={[styles.dayNumber, isToday && styles.today]}
           >
-            {dayNum}
+            {dayNameText} {dayNum}
           </Text>
+          {isToday && <View style={styles.todayIndicator} />}
         </TouchableOpacity>
       </View>
     );
@@ -77,10 +63,23 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     borderRadius: 14,
     marginTop: 2,
-    width: 28,
-    height: 28,
+    padding: 4,
     backgroundColor: DEFAULT_PROPS.WHITE_COLOR,
   },
-  dayName: { color: DEFAULT_PROPS.SECONDARY_COLOR, fontSize: 12 },
-  dayNumber: { color: DEFAULT_PROPS.SECONDARY_COLOR, fontSize: 16 },
+  dayNumber: {
+    color: '#9F9FAB',
+    fontSize: 14,
+    fontFamily: 'Gilroy-SemiBold',
+  },
+  today: {
+    color: DEFAULT_PROPS.PRIMARY_COLOR,
+  },
+  todayIndicator: {
+    width: 10,
+    height: 2,
+    borderRadius: 2,
+    backgroundColor: DEFAULT_PROPS.PRIMARY_COLOR,
+    position: 'absolute',
+    bottom: -4,
+  },
 });

@@ -1,12 +1,13 @@
 import isEqual from 'lodash/isEqual';
 import React, { memo } from 'react';
-import { StyleSheet, Text, TouchableOpacity } from 'react-native';
+import { StyleSheet, TouchableOpacity } from 'react-native';
 import Animated, {
   SharedValue,
   useAnimatedStyle,
   withTiming,
 } from 'react-native-reanimated';
 import type { PackedEvent, ThemeProperties } from '../../types';
+import CustomEvent from '../CustomEvent';
 
 export interface EventBlockProps {
   event: PackedEvent;
@@ -23,8 +24,6 @@ export interface EventBlockProps {
   theme: ThemeProperties;
   eventAnimatedDuration?: number;
 }
-
-const EVENT_DEFAULT_COLOR = '#FFFFFF';
 
 const EventBlock = ({
   event,
@@ -69,30 +68,19 @@ const EventBlock = ({
       top: withTiming(event.startHour * timeIntervalHeight.value, {
         duration: eventAnimatedDuration,
       }),
-      height: withTiming(eventHeight, {
+      height: withTiming(eventHeight - 6, {
         duration: eventAnimatedDuration,
       }),
       left: withTiming(event.left + columnWidth * dayIndex, {
         duration: eventAnimatedDuration,
       }),
-      width: withTiming(event.width, {
+      width: withTiming(event.width - 6, {
         duration: eventAnimatedDuration,
       }),
     };
   }, [event]);
 
-  const _renderEventContent = () => {
-    return (
-      <Text
-        allowFontScaling={theme.allowFontScaling}
-        style={[styles.title, theme.eventTitle]}
-      >
-        {event.title}
-      </Text>
-    );
-  };
-
-  const eventOpacity = selectedEventId ? 0.5 : 1;
+  const eventOpacity = selectedEventId ? 0.6 : 1;
 
   return (
     <Animated.View
@@ -108,15 +96,14 @@ const EventBlock = ({
         delayLongPress={300}
         onPress={_onPress}
         onLongPress={_onLongPress}
-        style={[
-          StyleSheet.absoluteFill,
-          { backgroundColor: event.color || EVENT_DEFAULT_COLOR },
-        ]}
+        style={[StyleSheet.absoluteFill]}
         activeOpacity={0.6}
       >
-        {renderEventContent
-          ? renderEventContent(event, timeIntervalHeight)
-          : _renderEventContent()}
+        {renderEventContent ? (
+          renderEventContent(event, timeIntervalHeight)
+        ) : (
+          <CustomEvent event={event} />
+        )}
       </TouchableOpacity>
     </Animated.View>
   );
@@ -142,8 +129,7 @@ export default memo(EventBlock, areEqual);
 const styles = StyleSheet.create({
   eventBlock: {
     position: 'absolute',
-    borderRadius: 4,
     overflow: 'hidden',
+    margin: 3,
   },
-  title: { paddingVertical: 4, paddingHorizontal: 2, fontSize: 10 },
 });

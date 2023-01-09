@@ -90,7 +90,7 @@ const AnimatedHour = ({
       newTime = dayjs(
         `1970/1/1 ${hourStr}:${minutesStr}`,
         'YYYY/M/D HH:mm'
-      ).format(hourFormat);
+      ).format(hourFormat.replace(' a', ''));
     }
     setTime(newTime);
   };
@@ -149,16 +149,16 @@ const styles = StyleSheet.create({
   },
   hourContainer: {
     position: 'absolute',
-    borderWidth: 1,
-    borderRadius: 4,
     top: -6,
     alignItems: 'center',
-    left: 4,
-    borderColor: DEFAULT_PROPS.PRIMARY_COLOR,
-    backgroundColor: DEFAULT_PROPS.WHITE_COLOR,
+    left: 7,
+    paddingLeft: 0,
+    backgroundColor: DEFAULT_PROPS.PRIMARY_COLOR,
+    borderRadius: 2,
   },
   hourText: {
-    color: DEFAULT_PROPS.PRIMARY_COLOR,
-    fontSize: 10,
+    fontFamily: 'Gilroy-SemiBold',
+    color: DEFAULT_PROPS.WHITE_COLOR,
+    fontSize: 11,
   },
 });

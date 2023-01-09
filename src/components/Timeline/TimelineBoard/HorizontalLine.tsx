@@ -28,7 +28,7 @@ const HorizontalLine = ({
       pointerEvents="box-none"
       style={[
         styles.line,
-        { width: rightSideWidth, backgroundColor: theme.cellBorderColor },
+        { width: rightSideWidth - 10, backgroundColor: theme.cellBorderColor },
         containerStyle,
         horizontalStyle,
       ]}
@@ -45,5 +45,6 @@ const styles = StyleSheet.create({
     height: 1,
     backgroundColor: '#E8E9ED',
     position: 'absolute',
+    marginLeft: 5,
   },
 });
