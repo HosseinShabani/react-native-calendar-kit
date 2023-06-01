@@ -242,7 +242,7 @@ export type UnavailableHoursStyle = Record<
   }[]
 >;
 
-export type EventCustomType = 'appointment' | 'personal';
+export type EventCustomType = 'appointment' | 'personal' | 'add';
 
 export interface CustomEvent {
   type: EventCustomType;
@@ -250,6 +250,7 @@ export interface CustomEvent {
   reservedByClient?: boolean;
   category?: string;
   haveAttachment?: boolean;
+  description: string;
 }
 
 export interface EventItem {

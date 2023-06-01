@@ -2,9 +2,17 @@ import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import dayjs from 'dayjs';
 import type { EventItem } from '../types';
+import { AttachSquare } from 'iconsax-react-native';
 
 const CustomEvent = ({ event }: { event: EventItem }) => {
-  const { title, category, type, reservedByClient } = event.event || {};
+  const {
+    title,
+    category,
+    type,
+    reservedByClient,
+    description,
+    haveAttachment,
+  } = event.event || {};
   const customStyle = {
     color: { color: '#7A7A8A' },
     event: {
@@ -24,6 +32,12 @@ const CustomEvent = ({ event }: { event: EventItem }) => {
       customStyle.event.borderLeftColor = '#5948AA';
     }
   }
+  if (type === 'add') {
+    customStyle.color.color = '#FF6E00';
+    customStyle.event.backgroundColor = '#FFFFFF';
+    customStyle.event.borderLeftColor = '#FF6E00';
+  }
+
   return (
     <View style={[styles.event, customStyle.event]}>
       <Text
@@ -38,9 +52,9 @@ const CustomEvent = ({ event }: { event: EventItem }) => {
         numberOfLines={1}
         style={[styles.eventHour, customStyle.color]}
       >
-        {dayjs(event.start).format('HH:mm')}
+        {dayjs(event.start).format('HH:mm A')}
         {' - '}
-        {dayjs(event.end).format('HH:mm')}
+        {dayjs(event.end).format('HH:mm A')}
       </Text>
       {category && (
         <Text
@@ -50,6 +64,20 @@ const CustomEvent = ({ event }: { event: EventItem }) => {
         >
           {category}
         </Text>
+      )}
+      {description && (
+        <Text
+          allowFontScaling={false}
+          numberOfLines={1}
+          style={[styles.eventDescription, customStyle.color]}
+        >
+          {description}
+        </Text>
+      )}
+      {haveAttachment && (
+        <View style={styles.eventAttachment}>
+          <AttachSquare size={16} color="#FFFFFF" />
+        </View>
       )}
     </View>
   );
@@ -76,6 +104,14 @@ const styles = StyleSheet.create({
     fontSize: 11,
     fontFamily: 'Gilroy-SemiBold',
     lineHeight: 14,
+  },
+  eventDescription: {
+    fontSize: 11,
+    lineHeight: 14,
+    fontFamily: 'Gilroy-Medium',
+  },
+  eventAttachment: {
+    margin: 'auto 0 0 auto',
   },
 });
 
