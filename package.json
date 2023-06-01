@@ -165,6 +165,7 @@
   "dependencies": {
     "dayjs": "^1.11.6",
     "iconsax-react-native": "^0.0.8",
-    "lodash": "^4.17.21"
+    "lodash": "^4.17.21",
+    "react-native-svg": "^13.9.0"
   }
 }
